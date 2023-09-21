@@ -1,22 +1,47 @@
 package com.alibou.demo.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import com.alibou.demo.customId.CustomIdGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 @Entity
 @Table(name="micro_users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hotel_seq")
+    @GenericGenerator(
+            name = "hotel_seq",
+            type = com.alibou.demo.customId.CustomIdGenerator.class,
+            parameters = {
+                    @Parameter(name = CustomIdGenerator.INCREMENT_PARAM, value = "1"),
+                    @Parameter(name = CustomIdGenerator.VALUE_PREFIX_PARAMETER, value = "user_"),
+                    @Parameter(name = CustomIdGenerator.NUMBER_FORMAT_PARAMETER, value = 
+                    		"%05d")
+            }
+    )
 	private String userId;
 	
 	@NotBlank
@@ -36,4 +61,12 @@ public class User {
 	 
 	 @Column(nullable=false)
 	 private Date date;
+	 
+	 @Transient
+	 private List<Rating> ratings =new ArrayList<>();
+
+	
+	 
+
+	
 }
